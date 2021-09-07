@@ -10,7 +10,7 @@ variables:
 trigger: none
 pr: none
 schedules:
-  - cron: "53 21 * * TUE"
+  - cron: "56 21 * * TUE"
     displayName: "Weekly PS SDK generation"
     branches:
       include:
