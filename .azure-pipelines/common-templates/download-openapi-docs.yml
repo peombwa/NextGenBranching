@@ -1,0 +1,88 @@
+﻿# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+parameters:
+  - name: Branch
+    type: string
+  - name: BaseBranch
+    type: string
+
+jobs:
+  - job: GetLatestDocs
+    displayName: Download OpenApiDocs
+    steps:
+    # Checkout.
+      - checkout: self
+        clean: true
+        fetchDepth: 1
+        persistCredentials: true
+
+      - task: PowerShell@2
+        displayName: "Configure user"
+        inputs:
+          targetType: "inline"
+          script: |
+            git config --global user.email "peter.ombwa@outlook.com"
+            git config --global user.name "Peter"
+
+      - task: Bash@3
+        displayName: "Switch branch to target branch: $(BaseBranch)"
+        condition: and(succeeded(), eq('${{ parameters.BaseBranch }}', ''))
+        inputs:
+          targetType: inline
+          script: |
+            git status
+            git fetch --all
+            git checkout $(BaseBranch)
+            git pull
+            git status
+    # End checkout.
+
+      - task: PowerShell@2
+        name: "ComputeBranch"
+        displayName: "Compute weekly branch name"
+        inputs:
+          targetType: inline
+          script: |
+            $branch = "{0}/{1}" -f "$(Branch)", (Get-Date -Format yyyyMMddHHmm)
+            Write-Host "##vso[task.setvariable variable=WeeklyBranch;isOutput=true]$branch"
+
+      - task: Bash@3
+        displayName: "Create weekly branch"
+        inputs:
+          targetType: inline
+          script: |
+            git status
+            git branch $(ComputeBranch.WeeklyBranch)
+            git checkout $(ComputeBranch.WeeklyBranch)
+            git status
+
+      - task: PowerShell@2
+        name: CalculateAndBumpModuleVersion
+        displayName: Calculate and bump module version
+        condition: and(succeeded(), ne(variables['OpenAPIDocDiff.ModulesWithChanges'], ''))
+        inputs:
+          pwsh: true
+          targetType: inline
+          script: |
+            New-Item -Path "(System.DefaultWorkingDirectory)\MyCommits\" -Name "$(Get-Date -Format "MM-dd-yyyy-hh-mm-ss").md" -Type File
+
+      - task: Bash@3
+        displayName: Commit downloaded files
+        condition: and(succeeded(), ne(variables['OpenAPIDocDiff.ModulesWithChanges'], ''))
+        env:
+          GITHUB_TOKEN: $(GITHUB_TOKEN)
+        inputs:
+          targetType: inline
+          script: |
+            git status
+            git add .
+            git commit -m 'Weekly OpenApiDocs Download'
+            git status
+            git push --set-upstream origin $(ComputeBranch.WeeklyBranch)
+            git status
+
+# References
+# [0] https://help.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables
+# [1] https://hub.github.com/hub-pull-request.1.html
+# https://help.github.com/en/actions/configuring-and-managing-workflows/authenticating-with-the-github_token
