@@ -60,7 +60,6 @@ jobs:
       - task: PowerShell@2
         name: CalculateAndBumpModuleVersion
         displayName: Calculate and bump module version
-        condition: and(succeeded())
         inputs:
           pwsh: true
           targetType: inline
@@ -69,7 +68,6 @@ jobs:
 
       - task: Bash@3
         displayName: Commit downloaded files
-        condition: and(succeeded())
         env:
           GITHUB_TOKEN: $(GITHUB_TOKEN)
         inputs:
