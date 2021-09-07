@@ -64,8 +64,8 @@ jobs:
           pwsh: true
           targetType: inline
           script: |
-            Write-Host "Path: (System.DefaultWorkingDirectory)/MyCommits/"
-            New-Item -Path "(System.DefaultWorkingDirectory)/MyCommits/" -Name "$(Get-Date -Format "MM-dd-yyyy-hh-mm-ss").md" -Type File
+            Write-Host "Path: $(System.DefaultWorkingDirectory)/MyCommits/"
+            New-Item -Path "$(System.DefaultWorkingDirectory)/MyCommits/" -Name "$(Get-Date -Format "MM-dd-yyyy-hh-mm-ss").md" -Type File
 
       - task: Bash@3
         displayName: Commit downloaded files
