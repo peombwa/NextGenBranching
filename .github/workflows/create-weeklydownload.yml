@@ -34,7 +34,6 @@ jobs:
       run: |
         echo $GITHUB_WORKSPACE
         ls -lsa $GITHUB_WORKSPACE
-        ls -lsa $GITHUB_WORKSPACE/tools
 
     # Create a pull request [1]
     - name: Create PR using the GitHub REST API via hub
