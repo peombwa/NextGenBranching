@@ -28,7 +28,7 @@ jobs:
 
       - task: Bash@3
         displayName: "Switch branch to target branch: $(BaseBranch)"
-        condition: and(succeeded(), eq($(BaseBranch), ''))
+        condition: and(succeeded(), eq('${{ parameters.BaseBranch }}', ''))
         inputs:
           targetType: inline
           script: |
