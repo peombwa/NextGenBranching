@@ -22,7 +22,7 @@ steps:
 
   - task: Bash@3
     displayName: "Switch branch to target branch: $(TargetBranch)"
-    condition: and(succeeded(), eq('${{ parameters.TargetBranch }}', ''))
+    # condition: and(succeeded(), eq('${{ parameters.TargetBranch }}', ''))
     inputs:
       targetType: inline
       script: |
