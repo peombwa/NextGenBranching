@@ -6,6 +6,7 @@ parameters:
     type: string
   - name: BaseBranch
     type: string
+    default: ''
 
 jobs:
   - job: GetLatestDocs
@@ -27,7 +28,7 @@ jobs:
 
       - task: Bash@3
         displayName: "Switch branch to target branch: $(BaseBranch)"
-        condition: and(succeeded(), eq('${{ parameters.BaseBranch }}', ''))
+        condition: and(succeeded(), ne('${{ parameters.BaseBranch }}', ''))
         inputs:
           targetType: inline
           script: |
