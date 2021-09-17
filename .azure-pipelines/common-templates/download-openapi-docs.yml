@@ -13,30 +13,33 @@ jobs:
     displayName: Download OpenApiDocs
     steps:
     # Checkout.
-      - checkout: self
-        clean: true
-        fetchDepth: 1
-        persistCredentials: true
+      - template: ./checkout.yml
+        parameters:
+          TargetBranch: ${{ parameters.BaseBranch }}
+      # - checkout: self
+      #   clean: true
+      #   fetchDepth: 1
+      #   persistCredentials: true
 
-      - task: PowerShell@2
-        displayName: "Configure user"
-        inputs:
-          targetType: "inline"
-          script: |
-            git config --global user.email "peter.ombwa@outlook.com"
-            git config --global user.name "Peter"
+      # - task: PowerShell@2
+      #   displayName: "Configure user"
+      #   inputs:
+      #     targetType: "inline"
+      #     script: |
+      #       git config --global user.email "peter.ombwa@outlook.com"
+      #       git config --global user.name "Peter"
 
-      - task: Bash@3
-        displayName: "Switch branch to target branch: $(BaseBranch)"
-        condition: and(succeeded(), ne('${{ parameters.BaseBranch }}', ''))
-        inputs:
-          targetType: inline
-          script: |
-            git status
-            git fetch --all
-            git checkout $(BaseBranch)
-            git pull
-            git status
+      # - task: Bash@3
+      #   displayName: "Switch branch to target branch: $(BaseBranch)"
+      #   condition: and(succeeded(), ne('${{ parameters.BaseBranch }}', ''))
+      #   inputs:
+      #     targetType: inline
+      #     script: |
+      #       git status
+      #       git fetch --all
+      #       git checkout $(BaseBranch)
+      #       git pull
+      #       git status
     # End checkout.
 
       - task: PowerShell@2
