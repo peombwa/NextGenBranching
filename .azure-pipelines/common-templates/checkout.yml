@@ -24,9 +24,9 @@ steps:
       targetType: inline
       script: |
         echo "Target branch:"
-        echo $(TargetBranch)
+        echo ${{ parameters.TargetBranch }}
         git status
         git fetch --all
-        git checkout $(TargetBranch)
+        git checkout ${{ parameters.TargetBranch }}
         git pull
         git status
